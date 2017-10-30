@@ -1,0 +1,115 @@
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="theme-color" content="#434A54">
+    <title>Led IoT</title>
+    <script src="/js/jquery.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/bootstrap.js"></script>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Julius+Sans+One:300,400" rel="stylesheet">
+    <style>
+        img{
+            width: 200px;
+        }
+        * {
+            padding: 0;
+            margin: 0;
+        }
+        
+        body {
+            font-weight: 300;
+            color: rgb(67, 74, 84);
+            font-family: 'Julius Sans One', sans-serif;
+            text-align: center;
+        }
+        
+        .cabecalho {
+            width: 100%;
+            padding: 2%;
+            background-color: rgb(67, 74, 84);
+            color: #fff;
+        }
+        
+        .rodape {
+            margin-top: 3.5%;
+            width: 100%;
+            padding: 1%;
+            background-color: rgb(67, 74, 84);
+            color: #fff;
+        }
+        
+        h4 {
+            line-height: 1.1;
+        }
+        
+        .content {
+            margin-top: 3.5%;
+        }
+        /*  Deafult: OFF */
+        
+        #status {
+            margin-top: 1%;
+            width: 150px;
+            height: 150px;
+            line-height: 2.1;
+            color: rgb(67, 74, 84);
+            border: 4px solid rgb(67, 74, 84);
+            border-radius: 75px;
+        }
+        
+        .on {
+            color: rgb(241, 196, 15) !important;
+            border-color: rgb(241, 196, 15) !important;
+        }
+    </style>
+</head>
+
+
+<center>
+    <header class="cabecalho">
+        <h2>Ufopa - Minicurso de IoT</h2>
+    </header>
+
+    <body>
+        <div class="content">
+            <img src="img/off.png" id="lampada" title="Clique para ligar ou desligar">
+            <h1 class="display-3" id="status">off</h1>
+        </div>
+    </body>
+
+    <footer class="rodape">
+        <h4>Dalton Felipe | Yasmin Braga</h4>
+    </footer>
+</center>
+<script>
+    var io = io(); 
+    var status = "off";
+    io.on('status', function(stats){
+        $('#status').html(stats);
+        status = stats;
+        if (status == "off"){
+            $("#lampada").attr("src", "img/off.png");
+            // [CSS] remove a classe on e volta ao status sem cor
+            $('#status').removeClass("on");
+        }else if (status == "on"){
+            $("#lampada").attr("src", "img/on.png");
+            // [CSS] muda a classe e deixa o status colorido
+            $('#status').addClass("on");
+        }
+    });
+    $('#lampada').click(function() {
+        if (status == "off") {
+            // [SOCKET.IO] envia a acao on para o server
+            io.emit('acao', "on");
+        } else if (status == "on") {
+            // [SOCKET.IO] envia a acao off para o server
+            io.emit('acao', "off");
+        }
+    });
+</script>
+
+</html>
